@@ -8,7 +8,7 @@
 #第二步：设置Rstudio
 #Rstudio下载软件包地址设置： tools-global options-package-CRAN改为China (Beijing) [https] - TUNA Team, Tsinghua University
 安装devtools：tools,install package 选择devtools，点击install
-'''library(devtools)'''
+```library(devtools)```
 #
 #
 #【可选】第三步：学习资料
