@@ -11,14 +11,14 @@ ggplot基本概念
 
 由ggplot2所制得图形有三个重要的组成部分
 
-数据   
-数据和视觉变量属性之间的映射（aesthetic mappings）   
-呈现数据结果的图层（一般使用 geom()函数）  
+**数据**  
+**数据和视觉变量属性之间的映射**（aesthetic mappings）   
+**呈现数据结果的图层**（一般使用 geom()函数）  
 
 
 设定图形颜色、大小和形状   
-aes(x,y,...)
-设定图形的x轴，y轴   
+aes(x,y,...)设定图形的x轴，y轴   
+
 shape   
 colour   
 size   
