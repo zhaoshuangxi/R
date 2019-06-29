@@ -1,0 +1,169 @@
+
+#商务大数据第七组作业
+#|姓名|学号
+#赵双喜|3118426003
+#龙佳星|3118426048
+#董 璞|3117580074
+#李 娜|3118426053
+#常 茵|3118426016
+#谢舒文|3118426014
+#李 茜|3118426026
+#赵丽轩|3118426004
+
+setwd("D:/document/mydocument/R")#设定工作目录。
+#读取文件
+weibol=readLines('weibo.txt',encoding = 'UTF-8')
+head(weibol)
+#使用字符分割函数将weibol分开
+tmp <- strsplit(weibol,'\t')
+class(tmp)
+#查出每个list元素的长度，来查看异常。
+aa=sapply(tmp,length)
+table(aa)
+
+#找出长度为7的。
+
+aa7=tmp[lapply(tmp,length)==7]
+aa8=tmp[lapply(tmp,length)==8]
+
+#重构数据长度7
+Raa7=data.frame(Name=c(sapply(aa7,"[",1)),
+                     Location=c(sapply(aa7,"[",2)),
+                    Gender=c(sapply(aa7,"[",3)),
+                    Nfollowers=c(sapply(aa7,"[",4)),
+                  Nfollow=c(sapply(aa7,"[",5)),
+                 Nweibo=c(sapply(aa7,"[",6)),
+                Createtime=c(sapply(aa7,"[",7)),
+                Description="")
+#重构数据长度8
+Raa8 <- data.frame(Name=c(sapply(aa8,"[",1)),
+                     Location=c(sapply(aa8,"[",2)),
+                     Gender=c(sapply(aa8,"[",3)),
+                     Nfollowers=c(sapply(aa8,"[",4)),
+                     Nfollow=c(sapply(aa8,"[",5)),
+                     Nweibo=c(sapply(aa8,"[",6)),
+                     Createtime=c(sapply(aa8,"[",7)),
+                     Description=c(sapply(aa8,"[",8)))
+#合并数据
+Result<-rbind(Raa7,Raa8)
+View(Result)
+a=c('商务大数据第五组作业')
+b=c('赵双喜','龙佳星','董璞','李娜','常茵','谢舒文','李茜','赵丽轩','3118426003','3118426048','3117580074','3118426053','3118426016','3118426014','3118426026','3118426004')
+M=matrix(b,nrow = 8,ncol=2)
+list(a,M)
+
+
+
+
+
+#load file
+weibo <- readLines("/Users/alexyang/Downloads/weibo.txt", encoding="UTF-8")
+
+#split raw data
+tmp <- strsplit(weibo,'\t')
+
+#filter desired dataa
+col7 <- tmp[lapply(tmp,length)==7]
+col8 <- tmp[lapply(tmp,length)==8]
+
+#rebuild data frame 7
+Result7 <- data.frame(Name=c(sapply(col7,"[",1)),
+Location=c(sapply(col7,"[",2)),
+Gender=c(sapply(col7,"[",3)),
+Nfollowers=c(sapply(col7,"[",4)),
+Nfollow=c(sapply(col7,"[",5)),
+Nweibo=c(sapply(col7,"[",6)),
+Createtime=c(sapply(col7,"[",7)),
+Description="")
+
+#rebuild data frame 8
+Result8 <- data.frame(Name=c(sapply(col8,"[",1)),
+                     Location=c(sapply(col8,"[",2)),
+                     Gender=c(sapply(col8,"[",3)),
+                     Nfollowers=c(sapply(col8,"[",4)),
+                     Nfollow=c(sapply(col8,"[",5)),
+                     Nweibo=c(sapply(col8,"[",6)),
+                     Createtime=c(sapply(col8,"[",7)),
+                     Description=c(sapply(col8,"[",8)))
+
+#combind data frame
+finResult<-rbind(Result7,Result8)
+
+View(Result)
+
+
+
+
+
+
+#filter desired data
+slist <- tmp[sapply(tmp, length)>6]
+
+#rebuild the data frame
+Result <- data.frame(Name=c(sapply(slist,"[",1)),
+                   Location=c(sapply(slist,"[",2)),
+                   Gender=c(sapply(slist,"[",3)),
+                   Nfollowers=c(sapply(slist,"[",4)),
+                   Nfollow=c(sapply(slist,"[",5)),
+                   Nweibo=c(sapply(slist,"[",6)),
+                   Cretetime=c(sapply(slist,"[",7)),
+                   Description=c(sapply(slist,"[",8)))
+
+View(Result)
+
+#rebuild the data frame, modify the NA in last column to ""
+Result1 <- data.frame(Name=c(sapply(slist,"[",1)),
+                    Location=c(sapply(slist,"[",2)),
+                    Gender=c(sapply(slist,"[",3)),
+                    Nfollowers=c(sapply(slist,"[",4)),
+                    Nfollow=c(sapply(slist,"[",5)),
+                    Nweibo=c(sapply(slist,"[",6)),
+                    Cretetime=c(sapply(slist,"[",7)),
+                    Description=c(sapply(slist,function(x){ifelse(is.na(x[8]),"",x[8])})))
+View(Result1)
+
+
+
+
+#load file
+weibo <- readLines("/Users/alexyang/Downloads/weibo.txt", encoding="UTF-8")
+
+#split raw data
+tmp <- strsplit(weibo,'\t')
+
+#filter desired data
+slist <- tmp[sapply(tmp, length)>6]
+
+#get columns
+colvalue <- function(list,num){
+  return(c(sapply(list, "[",num)))
+}
+
+#get columns, convert NA to ""
+colNoNA <- function(list,num){
+  return (c(sapply(list,function(x){ifelse(is.na(x[num]),"",x[num])})))
+}
+
+#rebuild the data frame directly
+Result <- data.frame(Name=colvalue(slist,1),
+                     Location=colvalue(slist,2),
+                     Gender=colvalue(slist,3),
+                     Nfollowers=colvalue(slist,4),
+                     Nfollow=colvalue(slist,5),
+                     Nweibo=colvalue(slist,6),
+                     Cretetime=colvalue(slist,7),
+                     Description=colvalue(slist,8))
+
+View(Result)
+
+#rebuild the data frame, modify the NA in last column to ""
+ResultNoNA <- data.frame(Name=colNoNA(slist,1),
+                      Location=colNoNA(slist,2),
+                      Gender=colNoNA(slist,3),
+                      Nfollowers=colNoNA(slist,4),
+                      Nfollow=colNoNA(slist,5),
+                      Nweibo=colNoNA(slist,6),
+                      Cretetime=colNoNA(slist,7),
+                      Description=colNoNA(slist,8))
+
+View(ResultNoNA)
