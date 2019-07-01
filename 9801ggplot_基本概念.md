@@ -25,3 +25,7 @@ size
 
 
 geom_point(colour='blue') 将所有散点设置为蓝色
+
+
+Geom_text()将文本直接添加到绘图中。
+geom_label()在文本后面绘制一个矩形，使其更易于阅读。
