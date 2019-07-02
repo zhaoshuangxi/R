@@ -11,4 +11,4 @@
 
 
 以下二维码可保存二次使用。
-![QR Code](https://github.com/zhaoshuangxi/R/blob/master/pic/001myjiaodagit.png)
+![QR Code]:https://github.com/zhaoshuangxi/R/blob/master/pic/001myjiaodagit.png
