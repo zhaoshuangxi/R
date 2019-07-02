@@ -10,5 +10,6 @@
 3. **book文件**：老师推荐及我使用的一些参考书，小白阶段可不用管，晋级阶段学习。
 
 
-以下二维码可保存二次使用。
-![QR Code]:https://github.com/zhaoshuangxi/R/blob/master/pic/001myjiaodagit.png
+以下二维码是Git地址，欢迎保存。   
+
+![QR Code](https://github.com/zhaoshuangxi/R/blob/master/pic/001myjiaodagit.png)
