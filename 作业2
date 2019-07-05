@@ -1,0 +1,148 @@
+
+1. 导入及整理数据
+library(readr)
+dat0 <- read.csv('Auto.csv', header=T , encoding="UTF-8")#读文件
+head(dat0)#看文件
+median(dat0$mpg)#取中位数
+dat0$mpg001[dat0$mpg>median(dat0$mpg)]=1#大于其中位数则令其为1
+dat0$mpg001[dat0$mpg<=median(dat0$mpg)]=0
+
+dat1=dat0[,-1]#去掉mpg列
+View(dat1)
+windows()
+
+2. 绘图看关系
+#合并到一张图
+windows()
+par(mfrow=c(2,4))
+
+#气缸数对油耗的影响
+boxplot(cylinders~mpg001,data = dat1,col='dodgerblue',ylab = '气缸数',xlab = '是否影响油耗',ylim=c(4,8),main='气缸数对油耗的影响')
+
+#散点图，气缸数对油耗的影响
+plot(dat0$cylinders,dat0$mpg,main='产地对油耗的影响',xlab='气缸',ylab='油耗',col='dodgerblue')
+
+#发动机排量对油耗的影响
+class(dat1$displacement)
+boxplot(displacement~mpg001,data = dat1,col='dodgerblue',ylab = '发动机排量',xlab = '是否影响油耗',main='发动机排量对油耗的影响')
+
+#马力对油耗的影响
+class(dat1$horsepower)
+#"numeric"
+dat1$horsepower = as.numeric(dat1$horsepower)  # 将horsepower的factor变量改为numeric变量
+boxplot(horsepower~mpg001,data = dat1,col='dodgerblue',ylab = '马力',xlab = '是否影响油耗',main='马力对油耗的影响')
+
+#车重对油耗的影响
+boxplot(weight~mpg001,data = dat1,col='dodgerblue',ylab = '车重',xlab = '是否影响油耗',main='车重对油耗的影响')
+
+#加速度对油耗的影响
+boxplot(acceleration~mpg001,data = dat1,col='dodgerblue',ylab = '加速度',xlab = '是否影响油耗',main='加速度对油耗的影响')
+
+#年份对油耗的影响
+boxplot(year~mpg001,data = dat1,col='dodgerblue',ylab = '年份',xlab = '是否影响油耗',main='年份对油耗的影响',xaxt="n")
+axis(1,at=c(1,2),labels=c("0-否","1-是"))
+
+#产地对油耗的影响：
+plot(dat0$origin,dat0$mpg,main='产地对油耗的影响',xaxt="n",xlab='产地',ylab='油耗',col='dodgerblue')
+#xaxt 坐标轴刻度
+#xlab X坐标轴名称
+#ylab Y坐标轴名称
+axis(1,at=c(1,2,3),labels=c("American","European","Japanese"))#X轴标签
+
+3. 分类数据
+
+## 60% of the sample size
+smp_size <- floor(0.60 * nrow(dat1))
+
+## set the seed to make your partition reproducible
+set.seed(123)
+train_ind <- sample(seq_len(nrow(dat1)), size = smp_size)
+
+train <-dat1[train_ind, ]
+test <- dat1[-train_ind, ]
+
+4. 构建模型及预测
+train=train[,-8]#去掉name列
+test=test[,-8]#去掉name列
+lm1=glm(mpg001~.,data=train,family=binomial())
+sink("summary.txt",append=FALSE,split=TRUE)#控制台不好复制，存下来
+print(summary(lm1))
+sink()
+
+
+Yhat=predict(lm1,newdata=test,type='response')#type是指选择预测的类型，由于是二分类变量，所以选择reponse，表示输出结果预测响应变量为1的概率
+ypre1=1*(Yhat>0.5)
+ypre2=1*(Yhat>mean(test$mpg001))
+
+#install.packages('pROC')
+library(pROC)
+windows()
+plot.roc(test$mpg001,Yhat,col='red',lwd=2,xaxs='i',yaxs='i')
+
+#ROC曲线
+#family=gaussian(线性回归)
+#family=bionmial(逻辑回归)
+
+
+lm2=glm(mpg001~year,data=train,family=binomial())#只取一个年份做模型看下
+Yhat2=predict(lm2,newdata=test,type='response')
+windows()
+plot.roc(test$mpg001,Yhat2,col='blue',lwd=2,xaxs='i',yaxs='i')
+lines.roc(test$mpg001,Yhat,col='red',lwd=2)
+
+ypre1=1*(Yhat>0.5)
+test$mpgpreict1 <- ypre1
+table(test$mpg001,test$mpgpreict1)#查看预测情况
+str(test)#查看有多少行。
+计算差错率：
+error=1-sum(test$mpgpreict1==test$mpg001)/length(test$mpg001)
+#sum(test$mpgpreict1==test$mpg001)/length(test$mpg001) 这个是正确的比率，然后1减去它就是错误的比率
+
+五. 重复计算查看差错率：
+#以下代码复制反复运行，查看最后一个结果：
+smp_size <- floor(0.60 * nrow(dat1))#分比例
+train_ind <- sample(seq_len(nrow(dat1)), size = smp_size)#取60%
+train <-dat1[train_ind, ]#存为训练集
+test <- dat1[-train_ind, ]#除去训练集即为测试集
+train=train[,-8]#去掉name列
+test=test[,-8]#去掉name列
+lm1=glm(mpg001~.,data=train,family=binomial())#构建模型
+Yhat=predict(lm1,newdata=test,type='response')#type是指选择预测的类型，由于是二分类变量，所以选择reponse，表示输出结果预测响应变量为1的概率
+ypre1=1*(Yhat>0.5)
+test$mpgpreict1 <- ypre1#表里增加一列。
+error=1-sum(test$mpgpreict1==test$mpg001)/length(test$mpg001)#计算错分率
+print(error)
+
+
+六、尝试优化
+
+检查共线性：vif(lm1)
+去掉排量影响
+
+#以下代码复制反复运行，查看最后一个结果：
+smp_size <- floor(0.60 * nrow(dat1))#分比例
+train_ind <- sample(seq_len(nrow(dat1)), size = smp_size)#取60%
+train <-dat1[train_ind, ]#存为训练集
+test <- dat1[-train_ind, ]#除去训练集即为测试集
+train=train[,-8]#去掉name列
+test=test[,-8]#去掉name列
+train=train[,-2]#去掉displacement列
+test=test[,-2]#去掉displacement列
+lm3=glm(mpg001~.,data=train,family=binomial())#构建模型
+Yhat=predict(lm3,newdata=test,type='response')#type是指选择预测的类型，由于是二分类变量，所以选择reponse，表示输出结果预测响应变量为1的概率
+ypre3=1*(Yhat>0.5)
+test$mpgpreict1 <- ypre3#表里增加一列。
+error=1-sum(test$mpgpreict1==test$mpg001)/length(test$mpg001)#计算错分率
+print(error)
+
+测试采用重量、年
+lm4=glm(mpg001~year+weight,data=train,family=binomial())#只取一个年份做模型看下
+Yhat4=predict(lm4,newdata=test,type='response')
+(summary(lm4))
+windows()
+plot.roc(test$mpg001,Yhat4,col='blue',lwd=2,xaxs='i',yaxs='i')
+lines.roc(test$mpg001,Yhat,col='red',lwd=2)
+
+
+coef(lm1)#查看回归系数
+exp(coef(lm1))#对结果进行指数化

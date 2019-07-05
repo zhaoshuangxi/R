@@ -1,0 +1,31 @@
+把一个矩阵里小于0的数都改成0
+
+1.代码如下:
+x[x < 0] <- 0
+R在数据处理上是非常强大的,掌握必要的技巧必不可少,尽量少用显示循环.
+
+2.判断一个数据框是否有NA
+
+anyNA(x1)
+
+
+
+plot(x=x轴数据,y=y轴数据,main=“标题”,sub=“子标题”，type=“线型”,xlab=“x轴名称”，ylab=“y轴名称”，xlim = c(x轴范围，x轴范围),ylim = c(y轴范围,y轴范围))
+
+
+
+
+
+
+mylm <- function(formula, data) {
+  mod <- lm(formula, data)
+  function(test) predict(lm1, test)
+}
+errorest(mpg001~.,data=train,,model = lm2)
+
+
+以下还没搞定
+
+#install.packages('resample')
+library('resample')
+model_Comparison <- resamples(list(lm1,lm2))
