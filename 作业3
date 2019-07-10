@@ -1,0 +1,153 @@
+#install.packages('xml2')
+library("xml2")
+#install.packages("rvest")
+library("rvest")
+#install.packages("dplyr")
+library("dplyr")
+#install.packages("stringr")
+library("stringr")
+#install.packages("httr")
+library("httr")
+
+#只爬取名字，其他模仿
+#对爬取页数进行设定并创建数据框。
+i=1:10
+movie_inf=data.frame()
+#利用for循环封装爬虫代码，进行批量抓取。
+for (i in 1:10){
+  #发现url规律，利用字符串函数进行url拼接并规定编码
+  web=read_html(str_c('https://movie.douban.com/top250?',i),encoding='UTF-8')
+  #提电影名信息
+  movie_name=web %>% html_nodes('.title:nth-child(1)') %>% html_text
+  #创建数据框存储以上信息
+  movie=data.frame(movie_name)
+  movie_inf=rbind(movie_inf,movie)
+}
+#把数据写入CSV文档
+write.csv(movie_inf,file='./movie_inf5.csv')
+a=read.csv('movie_inf5.csv')
+View(a)
+
+
+
+
+
+
+
+
+
+
+#对爬取页数进行设定并创建数据框。
+i=1:10
+movie_inf=data.frame()
+#利用for循环封装爬虫代码，进行批量抓取。
+for (i in 1:10){
+  #发现url规律，利用字符串函数进行url拼接并规定编码
+  web=read_html(str_c('https://movie.douban.com/top250?',i),encoding='UTF-8')
+  #提电影名信息
+  movie_name=web %>% html_nodes('.title:nth-child(1)') %>% html_text
+  #提电影别名信息
+  movie_other_name=web %>% html_nodes('.other , .title:nth-child(1)') %>% html_text
+
+  #创建数据框存储以上信息
+  movie=data.frame(movie_name,movie_other_name)
+  movie_inf=rbind(movie_inf,movie)
+}
+#把数据写入CSV文档
+write.csv(movie_inf,file='./movie_inf2.csv')
+a=read.csv('movie_inf2.csv',append=F)
+View(a)
+
+.star , .rating5-t
+.inq
+.playable
+.rating_num
+.other
+
+
+#对爬取页数进行设定并创建数据框。
+i=1:10
+movie_inf=data.frame()
+#利用for循环封装爬虫代码，进行批量抓取。
+for (i in 1:10){
+  #发现url规律，利用字符串函数进行url拼接并规定编码
+  web=read_html(str_c('https://movie.douban.com/top250?',i),encoding='UTF-8')
+  #提电影rank
+  movie_rank=web %>% html_nodes('em') %>% html_text
+  #提电影名信息
+  movie_name=web %>% html_nodes('.title:nth-child(1)') %>% html_text
+  #提电影别名信息
+  movie_other_name=web %>% html_nodes('.other') %>% html_text
+  #movie_other_name=str_replace_all(movie_other_name,' ',' ')
+  #提电影rating_num
+  movie_rating_num=web %>% html_nodes('.rating_num') %>% html_text
+  #提电影inq
+  movie_inq=web %>% html_nodes('.inq') %>% html_text
+  #提电影评论人数
+  movie_num_data =web %>% html_nodes('.rating_num~ span') %>% html_text
+  movie_num_data <- str_match(movie_num_data, "[0-9]*")
+  movie_num_data <- as.numeric(movie_num_data)
+  movie_num_data <- movie_num_data[!is.na(movie_num_data)]
+  #提取导演信息
+  movie_director =web %>% html_nodes('.bd p:nth-child(1)') %>% html_text
+  movie_director=movie_director[2:length(movie_director)]
+  #创建数据框存储以上信息
+  movie=data.frame(movie_rank,movie_name,movie_other_name,movie_rating_num,movie_inq,movie_num_data,movie_director)
+  movie_inf=rbind(movie_inf,movie)
+}
+#把数据写入CSV文档
+write.csv(movie_inf,file='./movie_inf8.csv')
+a=read.csv('movie_inf8.csv',encoding="UTF-8")
+View(a)
+a=read.csv('movie_inf8.csv')
+#处理other name
+name= gsub('<U+00A0>/<U+00A0>', "", a$movie_other_name,fixed = TRUE)
+a$movie_other_name=name
+#拆分出来导演
+director= gsub('<U+00A0>', ";", a$movie_director,fixed = TRUE)
+split_d<-str_split(director,";;;")
+b<-sapply(split_d,"[",1)
+c<-sapply(split_d,"[",2)
+b=gsub('导演:', "", b,fixed = TRUE)
+b=gsub('<U+00F6>m', "", b,fixed = TRUE)
+View(b)
+a$director_final=b
+f=gsub('...', "割",c,fixed = TRUE)
+split_f<-str_split(f,"割")
+f<-sapply(split_f,"[",1)
+f=gsub('主演:', "", f,fixed = TRUE)
+a$actor_final=f
+g<-sapply(split_f,"[",2)
+h=gsub(';/;', "割",g,fixed = TRUE)
+split_h<-str_split(h,"割")
+h1<-sapply(split_h,"[",1)
+h2<-sapply(split_h,"[",2)
+h3<-sapply(split_h,"[",3)
+a$year=h1
+a$location=h2
+a$type=h3
+write.csv(a,file='./movie_inf8.csv')
+a=read.csv('./movie_inf8.csv')
+View(a)
+a=a[,-9]
+str(a)
+
+
+#对爬取页数进行设定并创建数据框。
+i=1:1
+movie_inf=data.frame()
+#利用for循环封装爬虫代码，进行批量抓取。
+for (i in 1:1){
+  #发现url规律，利用字符串函数进行url拼接并规定编码
+  web=read_html(str_c('https://movie.douban.com/top250?',i),encoding='UTF-8')
+  #提取导演信息
+  movie_director =web %>% html_nodes('.bd p:nth-child(1)') %>% html_text
+ movie_director=movie_director[2:length(movie_director)]
+  #创建数据框存储以上信息
+  movie=data.frame(movie_director)
+  movie_inf=rbind(movie_inf,movie)
+}
+#把数据写入CSV文档
+write.csv(movie_inf,file='./movie_inf8.csv')
+a=read.csv('movie_inf8.csv')
+View(a)
